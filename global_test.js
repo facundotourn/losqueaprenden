@@ -1,3 +1,6 @@
+var pbisBase = [];
+var pbisSel = [];
+
 $(document).ready( function () {
   // Click en el botón "Aceptar"
   $('#button-aceptar').on("click", function() {
@@ -40,14 +43,13 @@ $(document).ready( function () {
 
   // Selección de un país de la lista
   $("#paises").on("click", "li", function() {
+    $("#compare-chart").removeClass("hidden");
     $(".list-element").removeClass("active");
     $(this).addClass("active");
     $("#basetable").empty();
     $("#seltable").empty();
     $("#htable").empty();
 
-    var pbiBase = [];
-    var pbiSel;
     var selected = $(this).text();
     var base = $("#input-pais").val();
     var year = $("#input-year").val();
@@ -61,21 +63,12 @@ $(document).ready( function () {
       $("#htable").append("<th>" + (parseInt(year) + i) + "</th>");
     }
 
-    console.log("Pais seleccionado: " + $(this).text());
-    console.log("Pais base: " + $("#input-pais").val());
-    console.log("Desde el año: " + $("#input-year").val());
-
     $.post("ajax/comparar.php", {ctryBase: base, yr: year}, function(data) {
       var pbiString = data.split('/');
 
       for(var i = 0; i < size + 1; i++) {
-        pbiBase[i] = parseFloat(pbiString[i]);
-        console.log(pbiBase[i]);
-      }
-
-      for(var i = 0; i < size + 1; i++) {
-        console.log(pbiBase[i]);
-        $("#basetable").append("<td>" + pbiBase[i] + "</td>");
+        pbisBase[i] = parseFloat(pbiString[i]);
+        $("#basetable").append("<td>" + pbisBase[i] + "</td>");
       }
     });
 
@@ -83,16 +76,18 @@ $(document).ready( function () {
       var pbiString = data.split('/');
 
       for(var i = 0; i < size + 1; i++) {
-        pbiBase[i] = parseFloat(pbiString[i]);
-        console.log(pbiBase[i]);
-      }
-
-      for(var i = 0; i < size + 1; i++) {
-        console.log(pbiBase[i]);
-        $("#seltable").append("<td>" + pbiBase[i] + "</td>");
+        pbisSel[i] = parseFloat(pbiString[i]);
+        $("#seltable").append("<td>" + pbisSel[i] + "</td>");
       }
     });
 
+    console.log(year);
+    console.log("PAIS B ANTES DE LLAMAR: ");
+    console.log(pbisSel);
+    console.log("PAIS A ANTES DE LLAMAR: ");
+    console.log(pbisBase);
+
+    actualizarChart(year, pbisBase, pbisSel);
   });
 
   // Click en el botón "Modificar"
