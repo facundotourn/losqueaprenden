@@ -17,8 +17,6 @@ if(isset($_POST['ctry']) === true && empty($_POST['ctry']) === false && isset($_
     $i++;
   }
 
-  echo "paises cuyos PBIs superaron al de ". $_POST['ctry'] ." entre ". $anio ." y 2015.";
-
   // Obteniendo lista de países con pbi inferior en 1960
   $sql = "SELECT pais FROM tablitax WHERE pbi < $pbisOrigen[0] AND year = ". $anio .";";
   $result1 = mysqli_query($dbc, $sql) or die("ERROR001");
@@ -50,6 +48,8 @@ if(isset($_POST['ctry']) === true && empty($_POST['ctry']) === false && isset($_
       }
     }
   }
+
+  echo "". $i ." países superaron el PBI de ". $_POST['ctry'] ." entre ". $anio ." y 2015:.";
 
   // Enviando la lista
   foreach($arrayFinal as $result) {
