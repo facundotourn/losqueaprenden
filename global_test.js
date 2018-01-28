@@ -2,8 +2,8 @@ var pbisBase = [];
 var pbisSel = [];
 
 var canvas = $("#lineChart");
-
-var CHART = Chart.Line(canvas, {
+var CHART = new Chart(canvas, {
+  type: 'line',
   data: {
     labels: [],
     datasets: [
@@ -28,8 +28,14 @@ var CHART = Chart.Line(canvas, {
         data: []
       }
     ]
+  },
+  options: {
+    responsive: true
   }
 });
+
+Chart.defaults.global.maintainAspectRatio = false;
+// se crea el chart, pelado
 
 $(document).ready( function () {
   // Click en el botón "Aceptar"
@@ -48,31 +54,49 @@ $(document).ready( function () {
       $("#button-aceptar").addClass("disabled");
       $("#button-cambiar").removeClass("disabled");
 
+      // trae los países que lo superaron
       $.post('ajax/cajanegra.php', {ctry: pais, yr: year}, function(data) {
         $('#mini-titulo').text(data.split('.')[0]);
 
         var paisesRes = data.split('.')[1].split('/');
 
         for(var i = 0; i < paisesRes.length - 1; i++) {
-          $("#paises").append('<li role="presentation" class="list-element" id="' + i + '"><a class="btn" href="#">' + paisesRes[i] + '</a></li>');
-          //$('li#' + i).text(paisesRes[i]);
+          $("#paises").append('<li role="presentation" class="list-element" id="' + i + '"><a class="btn">' + paisesRes[i] + '</a></li>');
         }
       });
 
+      // agrega el nombre del pais base a la tabla
       $("#basetable").append("<td>" + pais + "</td>");
 
+      // le pasa los años relevantes a la tabla
+      $("#htable").append("<th></th>");
+      for(var i = 0; i < size + 1; i++) {
+        $("#htable").append("<th>" + (parseInt(year) + i) + "</th>");
+        years[i] = parseInt(year) + i;
+      }
+
+      // trae los PBIs del país base y los tira a la lista, que todavía está oculta
       $.post("ajax/comparar.php", {ctryBase: pais, yr: year}, function(data) {
         var pbiString = data.split('/');
 
         for(var i = 0; i < size + 1; i++) {
           pbisBase[i] = parseFloat(pbiString[i]);
           $("#basetable").append("<td>" + pbisBase[i] + "</td>");
+          CHART.data.datasets[0].label = pais;
+          CHART.data.datasets[0].data = pbisBase;
+          CHART.data.labels = years;
+          CHART.update();
         }
+// le pasa la data y el nombre del pais base y los años al grafico
 
-        CHART.data.datasets[0].data = pbisBase;
       });
+
+
+
     }
 
+
+    // mostrar error en los campos de input en caso de estar vacíos
     if($.trim(pais) == '') {
       $("#pais-group").addClass("has-error");
     } else {
@@ -99,7 +123,6 @@ $(document).ready( function () {
     // Vaciar tabla
     $("#seltable").empty();
     // NOTE: solo borrar header y base cuando se modifica
-    $("#htable").empty();
 
     var selected = $(this).text();
     var base = $("#input-pais").val();
@@ -108,11 +131,7 @@ $(document).ready( function () {
 
     $("#seltable").append("<td>" + selected + "</td>");
 
-    $("#htable").append("<th>PBI en el año</th>");
-    for(var i = 0; i < size + 1; i++) {
-      $("#htable").append("<th>" + (parseInt(year) + i) + "</th>");
-    }
-
+    // al clickear un pais de la lista, trae los PBIs
     $.post("ajax/comparar.php", {ctryBase: selected, yr: year}, function(data) {
       var pbiString = data.split('/');
 
@@ -121,26 +140,18 @@ $(document).ready( function () {
         $("#seltable").append("<td>" + pbisSel[i] + "</td>");
       }
 
+
       CHART.data.datasets[1].data = pbisSel;
+      CHART.data.datasets[1].label = selected;
+      CHART.update();
+
     });
 
-    // actualizarChart(year, pbisBase, pbisSel, selected, base);
 
-    var cant = 2015 - year;
 
-    for(var i = 0; i < cant + 1; i++) {
-      years[i] = parseInt(year) + i;
-    }
-
-    CHART.data.labels = years;
-    // CHART.data.datasets[0].data = pbisBase;
-    // CHART.data.datasets[1].data = pbisSel;
-    CHART.data.datasets[0].label = base;
-    CHART.data.datasets[1].label = selected;
-    CHART.update();
 
     // Mostrar el chart
-    $("#compare-chart").removeClass("hidden");
+   $("#compare-chart").removeClass("hidden");
   });
 
   // Click en el botón "Modificar"
@@ -153,5 +164,12 @@ $(document).ready( function () {
     $("#button-aceptar").removeClass("disabled");
     $("#objetivo").addClass("hidden");
     $("#compare-chart").addClass("hidden");
+    $("#htable").empty();
+    $("#basetable").empty();
+
+    while(CHART.data.labels.length > 0) {
+       CHART.data.labels.pop();
+    }
+    CHART.update();
   })
 });

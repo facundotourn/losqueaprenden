@@ -6,16 +6,20 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container">
     <h1>Ingrese un país y un año</h1>
     <form action="" class="" id="my-form">
 
-      <div class="form-group" id="pais-group">
-        <div class="input-group">
-          <span class="input-group-addon">País</span>
-          <input id="input-pais" type="text" class="form-control">
+      <!-- Campos -->
+      <div class="ui-widget">
+        <div class="form-group" id="pais-group">
+          <div class="input-group">
+            <span class="input-group-addon">País</span>
+            <input id="input-pais" type="text" class="form-control">
+          </div>
         </div>
       </div>
 
@@ -26,38 +30,47 @@
         </div>
       </div>
 
-      <a href="#" class="btn btn-primary" id="button-aceptar"><span class="glyphicon glyphicon-ok"></span> Aceptar</a>
+
+      <!-- Botones -->
+      <a class="btn btn-primary" id="button-aceptar"><span class="glyphicon glyphicon-ok"></span> Aceptar</a>
       <a href="#" class="btn btn-default disabled" id="button-cambiar"><span class="glyphicon glyphicon-pencil"></span> Modificar</a>
     </form>
   </div>
 
   <br>
 
-  <div class="container-fluid">
+  <!-- Lista de países -->
+  <div class="container">
     <div class="row">
-      <div class="col-xs-2 col-md-3">
+      <div class="col-md-3">
         <div><p id="mini-titulo" class="lead"></p></div>
         <ul id="paises" class="nav nav-pills nav-stacked">
         </ul>
       </div>
-      <div class="col-md-9 hidden" id="objetivo">
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped">
-            <tr id="htable">
-            </tr>
-            <tr id="basetable">
-            </tr>
-            <tr id="seltable">
-            </tr>
-          </table>
+      <!-- VOLVER A HIDDEAR EL COnTAINER FLUID; LO MISMO EN EL SCRIPT JS -->
+      <div class="col-md-7 col-md-offset-1 hidden" id="objetivo">
+        <div class="row">
+          <!-- Chart -->
+          <div id="compare-chart" class="container-fluid hidden" height="500">
+            <canvas id="lineChart" height="400" width="400">
+
+
+            </canvas>
+          </div>
         </div>
+
         <br>
-        <!-- Chart -->
-        <div id="compare-chart" class="container-fluid hidden">
-          <canvas id="lineChart" height="400" width="400">
-
-
-          </canvas>
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <tr id="htable">
+              </tr>
+              <tr id="basetable">
+              </tr>
+              <tr id="seltable">
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -65,9 +78,11 @@
 
   <script src="js/jquery.js" type="text/javascript"></script>
   <script src="js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="js/jquery-ui.js" type="text/javascript"></script>
   <script src="js/bootstrap.bundle.min.js" type="text/javascript"></script>
   <script src="js/Chart.min.js"></script>
   <script src="global_test.js" type="text/javascript"></script>
   <script src="js/actualizar_chart.js" type="text/ecmascript"></script>
+  <script src="js/autocomplete.js"></script>
 </body>
 </html>
